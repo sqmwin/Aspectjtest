@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop" xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+    <!--注册目标对象-->
+    <bean class="com.sqm.aspectj.xml.service.impl.UserServiceImpl" id="userServiceTarget"/>
+    <!--注册切面-->
+    <bean class="com.sqm.aspectj.xml.aspect.MyAspect" id="myAspect"/>
+    <!--配置aop-->
+    <aop:config>
+        <!--定义切入点-->
+        <aop:pointcut id="doSomePointcut" expression="execution(* *..UserServiceImpl.doSome())"/>
+        <aop:pointcut id="doOtherPointcut" expression="execution(* *..UserServiceImpl.doOther(..))"/>
+        <aop:pointcut id="doThirdPointcut" expression="execution(* *..UserServiceImpl.doThird(..))"/>
+
+        <!--定义切面-->
+        <aop:aspect ref="myAspect">
+            <aop:before method="beforeSome" pointcut-ref="doSomePointcut"/>
+            <aop:before method="beforeOther" pointcut-ref="doOtherPointcut"/>
+            <aop:after-returning method="afterReturning" pointcut-ref="doThirdPointcut" returning="result"/>
+            <aop:after-throwing method="afterThrowing" throwing="e" pointcut-ref="doOtherPointcut"/>
+            <aop:around method="around" pointcut-ref="doSomePointcut"/>
+            <aop:after method="after" pointcut-ref="doSomePointcut"/>
+        </aop:aspect>
+    </aop:config>
+</beans>
